@@ -466,10 +466,15 @@ function updateCheckInStats(currentData, previousData) {
     const dateKey = d.toISOString().split('T')[0];
     const dateFile = dateKey + '.json';
 
+    if (!summaryStats.lastSevenDays) {
+      summaryStats.lastSevenDays = {};  // Inisialisasi lastSevenDays jika belum ada
+    }
+    
     if (i === 0) {
       console.log(`Day ${i} (${dateKey}): Using todayStats.count = ${todayStats.count} for consistency`);
       summaryStats.lastSevenDays[dateKey] = todayStats.count;
     }
+    
 
     else if (dailyFilesData[dateFile]) {
       const fileCount = dailyFilesData[dateFile].count || 0;

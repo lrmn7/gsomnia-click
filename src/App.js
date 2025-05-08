@@ -473,7 +473,7 @@ function App() {
         setIsMuted(false);
         try {
           await bgMusicRef.current.play();
-        } catch { }
+        } catch {}
       }
 
       await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -563,7 +563,7 @@ function App() {
 
       if (!isMuted) {
         clickAudioRef.current.currentTime = 0;
-        clickAudioRef.current.play().catch(() => { });
+        clickAudioRef.current.play().catch(() => {});
       }
 
       const now = Date.now();
@@ -656,7 +656,7 @@ function App() {
               setIsMuted(false);
               try {
                 await bgMusicRef.current.play();
-              } catch { }
+              } catch {}
             }
 
             await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -926,7 +926,6 @@ function App() {
     currentPage < totalPages && setCurrentPage((p) => p + 1);
   const prevPage = () => currentPage > 1 && setCurrentPage((p) => p - 1);
 
-
   const addSomniaNetwork = async () => {
     try {
       if (!window.ethereum) {
@@ -999,7 +998,9 @@ function App() {
           console.log("Not GM today yet, will display GM window");
           setShowCheckInModal(true);
         } else {
-          console.log("Already GM today or data is incorrect, window will not be displayed.");
+          console.log(
+            "Already GM today or data is incorrect, window will not be displayed."
+          );
           setShowCheckInModal(false);
         }
       } catch (err) {
@@ -1156,7 +1157,7 @@ function App() {
 
       if (!isMuted) {
         clickAudioRef.current.currentTime = 0;
-        clickAudioRef.current.play().catch(() => { });
+        clickAudioRef.current.play().catch(() => {});
       }
 
       const tx = await contract.click();
@@ -1269,7 +1270,7 @@ function App() {
           <div className="stats-header">
             <h2 className="flex items-center space-x-2">
               <span className="text-white text-sm font-semibold">
-                Somnia Clicks
+                gSomnia Click
               </span>
               <img
                 src="/clicklogo.png"
@@ -1286,7 +1287,7 @@ function App() {
               <span className="stat-value">{totalUsers.toLocaleString()}</span>
             </div>
             <div className="stat-item">
-              <span>Total Somnia Clicks</span>
+              <span>Total gSomnia Clicks</span>
               <span className="stat-value">{totalClicks.toLocaleString()}</span>
             </div>
             <div className="stat-item">
@@ -1299,13 +1300,13 @@ function App() {
             {showFullStats && (
               <>
                 <div className="stat-item">
-                  <span>Your Somnia Clicks</span>
+                  <span>Your gSomnia Clicks</span>
                   <span className="stat-value">
                     {myClicks.toLocaleString()}
                   </span>
                 </div>
                 <div className="stat-item">
-                  <span>Today's Somnia Clicks</span>
+                  <span>Today's gSomnia Clicks</span>
                   <span className="stat-value">{myTodayClicks}</span>
                 </div>
                 <div className="stat-item">
@@ -1323,8 +1324,8 @@ function App() {
                     {totalCheckIns > 0
                       ? totalCheckIns
                       : checkedInToday
-                        ? "1"
-                        : "0"}
+                      ? "1"
+                      : "0"}
                   </span>
                 </div>
               </>
@@ -1374,7 +1375,6 @@ function App() {
           </div>
         </div>
       </div>
-
 
       {/* Right Panel: Leaderboard */}
       <div className="right-panel">
