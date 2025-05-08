@@ -107,7 +107,7 @@ function App() {
 
     if (availableWallets.length === 0) {
       toast.error(
-        "ไม่พบ wallet ในเบราว์เซอร์ กรุณาติดตั้ง MetaMask หรือ wallet อื่นก่อน"
+        "Wallet not found in the browser. Please install MetaMask or another wallet first."
       );
       return;
     }
@@ -633,7 +633,7 @@ function App() {
 
   useEffect(() => {
     loadTodayClicksFromLocal();
-    loadGmSummaryData(); // โหลดข้อมูล Gm จาก summary.json
+    loadGmSummaryData();
 
     setAppLoaded(true);
 
@@ -856,7 +856,7 @@ function App() {
   const gmToday = async () => {
     try {
       if (!signer) {
-        console.error("ไม่พบ wallet ที่เชื่อมต่อ");
+        console.error("No connected wallet found.");
         return;
       }
 
@@ -902,10 +902,10 @@ function App() {
       setMyTodayClicks((prev) => prev + 1);
 
       console.log(
-        `บันทึกการ GM สำเร็จ: streak=${newStreak}, total=${newTotal}`
+        `GM log saved successfully.: streak=${newStreak}, total=${newTotal}`
       );
     } catch (error) {
-      console.error("เกิดข้อผิดพลาดในการบันทึก GM:", error);
+      console.error("An error occurred while saving GM:", error);
     }
   };
 
@@ -977,17 +977,17 @@ function App() {
 
     if (!isConnected || !signer || isConnecting) return;
 
-    console.log("กำลังเตรียมตรวจสอบสถานะ Gm...");
+    console.log("Preparing to check GM status...");
 
     let isMounted = true;
 
     const timer = setTimeout(async () => {
-      console.log("เริ่มตรวจสอบสถานะ Gm...");
+      console.log("Starting to check GM status...");
 
       try {
         const hasCheckedIn = await loadUserGmData();
         console.log(
-          "ผลการตรวจสอบ hasCheckedIn:",
+          "Check result for hasCheckedIn:",
           hasCheckedIn,
           "checkedInToday:",
           checkedInToday
@@ -996,22 +996,22 @@ function App() {
         if (!isMounted) return;
 
         if (!hasCheckedIn && !checkedInToday) {
-          console.log("ยังไม่ได้ Gm วันนี้ จะแสดงหน้าต่าง Gm");
+          console.log("Not GM today yet, will display GM window");
           setShowCheckInModal(true);
         } else {
-          console.log("ได้ Gm วันนี้แล้ว หรือข้อมูลไม่ถูกต้อง ไม่แสดงหน้าต่าง");
+          console.log("Already GM today or data is incorrect, window will not be displayed.");
           setShowCheckInModal(false);
         }
       } catch (err) {
         if (!isMounted) return;
 
-        console.error("เกิดข้อผิดพลาดในการตรวจสอบ Gm:", err);
+        console.error("An error occurred while checking GM:", err);
         setShowCheckInModal(false);
       }
     }, 2000);
 
     return () => {
-      console.log("ยกเลิกการตรวจสอบ Gm");
+      console.log("GM check cancelled.");
       clearTimeout(timer);
       isMounted = false;
     };
@@ -1120,7 +1120,7 @@ function App() {
       <div className="modal-overlay">
         <div className="modal-content checkin-modal">
           <div className="modal-header">
-            <h2>Daily Gm</h2>
+            <h2>Daily gSomnia</h2>
             <button
               className="close-button"
               onClick={() => setShowCheckInModal(false)}
@@ -1130,7 +1130,7 @@ function App() {
           </div>
           <div className="modal-body">
             <div className="checkin-icon">✓</div>
-            <p>Welcome back! Say Gm today to continue your streak!</p>
+            <p>Welcome back! Say gSomnia today to continue your streak!</p>
             <p className="streak-count">Current streak: {checkInStreak} days</p>
           </div>
           <div className="modal-footer">
@@ -1172,7 +1172,7 @@ function App() {
 
         toast.success(
           <div>
-            Gm recorded! 🌞 Streak: {checkInStreak + 1} days
+            gSomnia recorded! 🌞 Streak: {checkInStreak + 1} days
             <br />
             <a
               href={`https://shannon-explorer.somnia.network/tx/${tx.hash}`}
