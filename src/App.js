@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import abi from "./ClickCounterABI.json";
-import bgMusicFile from "./assets/sounds/sleepless-sinec-03.wav";
+import bgMusicFile from "./assets/sounds/somnia-vibes-music.mp3";
 import clickSoundFile from "./assets/effects/click.mp3";
 import { Analytics } from "@vercel/analytics/react";
 import { FaGithub, FaXTwitter } from "react-icons/fa6";
@@ -612,7 +612,7 @@ function App() {
           next.delete(tx.hash);
           return next;
         });
-      }, 30000);
+      }, 5000);
     } catch (err) {
       console.error("Click error:", err);
 
@@ -1162,7 +1162,7 @@ function App() {
 
       const tx = await contract.click();
       setPendingTransactions((prev) => new Set(prev).add(tx.hash));
-      toast.info("Gm transaction sent. Waiting for confirmation...");
+      toast.info("gSomnia transaction sent. Waiting for confirmation...");
 
       const receipt = await waitForTransaction(tx);
 
