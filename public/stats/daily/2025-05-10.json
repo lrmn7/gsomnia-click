@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
   "count": 1,
   "users": {
     "0x90a69de07adeedba5d2f2d0afdc0f4d9affcba4f": true
   }
+=======
+  "count": 0,
+  "users": {}
+>>>>>>> 354c0ec68ee880cc9b17348ad57b6ab95b51698d
 }

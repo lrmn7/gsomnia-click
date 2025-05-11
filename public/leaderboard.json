@@ -1,15 +1,27 @@
 {
+<<<<<<< HEAD
   "lastUpdate": "2025-05-11T03:59:52.683Z",
   "data": [
     {
       "user": "0x90A69de07ADEEDBA5d2f2D0afdc0f4D9aFFcbA4F",
       "clicks": "55"
+=======
+  "lastUpdate": "2025-05-11T03:14:12.229Z",
+  "data": [
+    {
+      "user": "0x90A69de07ADEEDBA5d2f2D0afdc0f4D9aFFcbA4F",
+      "clicks": "49"
+>>>>>>> 354c0ec68ee880cc9b17348ad57b6ab95b51698d
     }
   ],
   "stats": {
     "totalUsers": 1,
     "checkIns": {
+<<<<<<< HEAD
       "checkInsToday": 1,
+=======
+      "checkInsToday": 0,
+>>>>>>> 354c0ec68ee880cc9b17348ad57b6ab95b51698d
       "totalCheckIns": 3,
       "maxStreak": 1
     }
