@@ -133,7 +133,7 @@ function App() {
     if (!bgMusicRef.current) return;
     bgMusicRef.current.muted = isMuted;
     if (!isMuted) {
-      bgMusicRef.current.play().catch((err) => console.log("BGM autoplay blocked:", err));
+      bgMusicRef.current.stop().catch((err) => console.log("BGM autoplay blocked:", err));
     } else {
       bgMusicRef.current.pause();
     }
@@ -308,7 +308,7 @@ function App() {
       if (bgMusicRef.current && isMuted) { // Hanya mainkan jika sebelumnya muted
         bgMusicRef.current.muted = false;
         setIsMuted(false); // Update state
-        try { await bgMusicRef.current.play(); } catch {}
+        try { await bgMusicRef.current.stop(); } catch {}
       }
       await window.ethereum.request({ method: "eth_requestAccounts" });
       if (!(await setupNetwork(true))) { // force check network
@@ -357,7 +357,7 @@ function App() {
     setCheckInStreak(0);
     setTotalCheckIns(0);
     if (bgMusicRef.current && !isMuted) { // Matikan musik jika sedang play
-        bgMusicRef.current.pause(); // Atau set muted true
+        bgMusicRef.current.stop(); // Atau set muted true
         // setIsMuted(true); 
     }
     toast.info("Wallet disconnected.");
@@ -435,7 +435,7 @@ function App() {
           if (bgMusicRef.current && isMuted) { // Hanya mainkan jika muted
             bgMusicRef.current.muted = false;
             setIsMuted(false);
-            try { await bgMusicRef.current.play(); } catch {}
+            try { await bgMusicRef.current.stop(); } catch {}
           }
           await window.ethereum.request({ method: "eth_requestAccounts" });
           if (!(await setupNetwork(true))) throw new Error("Network setup failed");
@@ -716,16 +716,16 @@ function App() {
       <div className="modal-overlay">
         <div className="modal-content checkin-modal">
           <div className="modal-header">
-            <h2>Daily gSomnia</h2>
+            <h2>Daily Somnia</h2>
             <button className="close-button" onClick={() => setShowCheckInModal(false)}>×</button>
           </div>
           <div className="modal-body">
             <div className="checkin-icon">☀️</div>
-            <p>Welcome back! Say gSomnia today to continue your streak!</p>
+            <p>Welcome back! Say Somnia today to continue your streak!</p>
             <p className="streak-count">Current streak: {checkInStreak} days</p>
           </div>
           <div className="modal-footer">
-            <button className="checkin-button" onClick={handleCheckInClick}>Click to gSomnia</button>
+            <button className="checkin-button" onClick={handleCheckInClick}>Click to Somnia</button>
           </div>
         </div>
       </div>
@@ -774,13 +774,13 @@ function App() {
       const tx = await contract.click(); // Check-in adalah sebuah klik
       txHashForPending = tx.hash;
       setPendingTransactions((prev) => new Set(prev).add(tx.hash));
-      toast.info("gSomnia transaction sent. Waiting for confirmation...");
+      toast.info("Somnia Clicks transaction sent. Waiting for confirmation...");
       const receipt = await waitForTransaction(tx);
       if (receipt.status === 1) {
         await loadBlockchainData(); // Muat ulang data klik
         await gmToday(); // Proses logika GM setelah transaksi berhasil
         toast.success(
-          <div>gSomnia recorded! 🌞 Streak: {localStorage.getItem(`checkInStreak_${await signer.getAddress()}`)} days <br />
+          <div>Somnia Clicks recorded! 🌞 Streak: {localStorage.getItem(`checkInStreak_${await signer.getAddress()}`)} days <br />
             <a href={`https://shannon-explorer.somnia.network/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer" style={{ color: "#FFA500" }}>
               View Transaction
             </a>
@@ -790,11 +790,11 @@ function App() {
           throw new Error("Transaction failed on-chain.");
       }
     } catch (txError) {
-      console.error("Gm error:", txError);
+      console.error("Somnia Clicks error:", txError);
       if (txError.message && txError.message.includes("HTTP request failed")) toast.error("Network connection error. Please try again later.");
       else if (txError.code === "ACTION_REJECTED") toast.error("Gm transaction rejected");
       else if (txError.code === "INSUFFICIENT_FUNDS") toast.error("Not enough STT for gas");
-      else toast.error("Gm transaction failed. Please try again.");
+      else toast.error("Somnia Clicks transaction failed. Please try again.");
     } finally {
         if(txHashForPending) {
             setPendingTransactions((prev) => {
@@ -809,8 +809,19 @@ function App() {
   return (
     <div className="app-container">
       <nav className="navbar">
-        <div className="navbar-title">gSomnia Clicks</div>
+        <div className="navbar-title">Somnia Clicks</div>
         <div className="navbar-links">
+                    <div className="sound-control-navbar">
+          <a
+            href="https://x.com/0xSambo24"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="X (Twitter)"
+            className="twitter-icon-navbar"
+          >
+            <FaXTwitter />
+          </a>
+          </div>
           {isConnected && signer && (
             <span className="wallet-address text-secondary">
               {signer.address.slice(0, 6)}...{signer.address.slice(-4)}
@@ -823,14 +834,7 @@ function App() {
           >
             {isConnecting ? 'Connecting...' : isConnected ? 'Disconnect' : 'Connect Wallet'}
           </button>
-          <div className="sound-control-navbar">
-            <button
-              className="glass-button"
-              onClick={() => setIsMuted(!isMuted)}
-            >
-              {isMuted ? "🔇" : "🔊"}
-            </button>
-          </div>
+
         </div>
       </nav>
 
@@ -839,7 +843,6 @@ function App() {
           <div className="stats-header">
             <h2>
               <span>Statistics</span>
-              <img src="/clicklogo.png" alt="Stats Logo" width={24} height={24} />
             </h2>
           </div>
           <div className="stats-content">
@@ -906,10 +909,10 @@ function App() {
 
         <section className="centered-section leaderboard-panel-centered">
           <div className="leaderboard-header">
-            <h2>🏆 Leaderboard</h2>
+            <h2>Leaderboard</h2>
             {lastLeaderboardUpdate && (
               <div className="last-update text-secondary">
-                Snapshot is scheduled for 31-05-25 23:11:58 UTC. 
+                Snapshot is scheduled for 30-06-25 23:11:58 UTC. 
               </div>
             )}
              { /* Tampilkan rank hanya jika terhubung DAN ada signer */ }
@@ -979,7 +982,7 @@ function App() {
             <SiDiscord />
           </a>
           <a
-            href="https://discord.com/invite/somnia"
+            href="https://x.com/somnia_network"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="X (Twitter)"
@@ -996,11 +999,6 @@ function App() {
           </a>
         </div>
       </section>
-
-      <footer className="footer">
-        <p className="text-primary" style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>gSomnia Clicks</p> {/* Baris pertama, bisa ditambahkan style jika perlu */}
-        <p className="text-secondary" style={{ fontSize: '0.9rem' }}>Built with 💛 by Somnia Community</p> {/* Baris kedua */}
-      </footer>
 
       {renderCheckInModal()}
       <WalletSelectorModal />
