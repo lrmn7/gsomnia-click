@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { BrowserProvider, Contract } from "ethers";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./App.css";
+import "./App.css"; 
 import abi from "./ClickCounterABI.json"; //
-// import bgMusicFile from "./assets/sounds/somnia-vibes-music.mp3"; // DIHAPUS
+import bgMusicFile from "./assets/sounds/somnia-vibes-music.mp3"; //
 import clickSoundFile from "./assets/effects/click.mp3"; //
 import { Analytics } from "@vercel/analytics/react"; //
 import { FaGithub, FaXTwitter } from "react-icons/fa6"; //
@@ -29,9 +29,9 @@ function App() {
 
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isMuted, setIsMuted] = useState(true); // Tetap untuk mengontrol suara klik
+  const [isMuted, setIsMuted] = useState(true);
 
-  // const bgMusicRef = useRef(null); // DIHAPUS
+  const bgMusicRef = useRef(null);
   const clickAudioRef = useRef(null);
 
   const [pendingTransactions, setPendingTransactions] = useState(new Set());
@@ -50,6 +50,8 @@ function App() {
   const [checkInStreak, setCheckInStreak] = useState(0);
 
   const [showCheckInModal, setShowCheckInModal] = useState(false);
+
+  // const [appLoaded, setAppLoaded] = useState(false); // Tampaknya tidak digunakan secara signifikan, bisa dipertimbangkan untuk dihapus
 
   const [isOnCorrectNetwork, setIsOnCorrectNetwork] = useState(false);
 
@@ -116,20 +118,26 @@ function App() {
     );
   };
 
-  // Modifikasi useEffect untuk suara: Hanya untuk clickSoundFile
-  useEffect(() => {
-    // Inisialisasi suara klik
-    if (clickSoundFile) { // Pastikan file ada sebelum membuat objek Audio
-      clickAudioRef.current = new Audio(clickSoundFile);
-    }
-  
-    // Fungsi cleanup untuk clickAudioRef
+  useEffect(() => { //
+    bgMusicRef.current = new Audio(bgMusicFile);
+    bgMusicRef.current.loop = true;
+    bgMusicRef.current.muted = isMuted;
+    clickAudioRef.current = new Audio(clickSoundFile);
     return () => {
+      bgMusicRef.current?.pause();
       clickAudioRef.current?.pause();
     };
-  }, []); // Dependency array kosong agar efek ini hanya berjalan sekali saat mount
+  }, [isMuted]); // Memindahkan isMuted ke dependency array agar BGM diperbarui saat isMuted berubah
 
-  // useEffect kedua yang mengontrol BGM berdasarkan isMuted DIHAPUS SELURUHNYA
+  useEffect(() => { //
+    if (!bgMusicRef.current) return;
+    bgMusicRef.current.muted = isMuted;
+    if (!isMuted) {
+      bgMusicRef.current.play().catch((err) => console.log("BGM autoplay blocked:", err));
+    } else {
+      bgMusicRef.current.pause();
+    }
+  }, [isMuted]);
 
 
   const loadOffChainLeaderboard = async () => { //
@@ -177,7 +185,7 @@ function App() {
                 try {
                     await addSomniaNetwork(); // Coba tambahkan jaringan
                     // Setelah menambahkan, coba switch lagi secara otomatis
-                    await window.ethereum.request({
+                     await window.ethereum.request({
                         method: "wallet_switchEthereumChain",
                         params: [{ chainId: SOMNIA_CHAIN_ID_HEX }],
                     });
@@ -263,8 +271,8 @@ function App() {
           const serverDate = new Date(userData.lastCheckIn);
           const todayDate = new Date();
           const isSameDay = serverDate.getFullYear() === todayDate.getFullYear() &&
-                                serverDate.getMonth() === todayDate.getMonth() &&
-                                serverDate.getDate() === todayDate.getDate();
+                            serverDate.getMonth() === todayDate.getMonth() &&
+                            serverDate.getDate() === todayDate.getDate();
           
           if (isSameDay) {
             localStorage.setItem(`checkedInToday_${userAddress}`, "true");
@@ -273,8 +281,8 @@ function App() {
             setTotalCheckIns(total);
             return true;
           } else {
-              localStorage.removeItem(`checkedInToday_${userAddress}`); // Reset jika tanggal server beda
-              setCheckedInToday(false); // Set false jika belum check-in hari ini menurut server
+             localStorage.removeItem(`checkedInToday_${userAddress}`); // Reset jika tanggal server beda
+             setCheckedInToday(false); // Set false jika belum check-in hari ini menurut server
           }
         }
       } catch (fetchError) {
@@ -297,7 +305,11 @@ function App() {
     toast.dismiss();
     setIsConnecting(true);
     try {
-      // Logika untuk bgMusicRef.current dan setIsMuted yang terkait BGM DIHAPUS dari sini
+      if (bgMusicRef.current && isMuted) { // Hanya mainkan jika sebelumnya muted
+        bgMusicRef.current.muted = false;
+        setIsMuted(false); // Update state
+        try { await bgMusicRef.current.play(); } catch {}
+      }
       await window.ethereum.request({ method: "eth_requestAccounts" });
       if (!(await setupNetwork(true))) { // force check network
         setIsConnecting(false);
@@ -321,7 +333,11 @@ function App() {
     } catch (err) {
       if (err.code === 4001) toast.error("Connection rejected by user"); //
       else toast.error("Connection failed");
-      // Logika untuk mengembalikan state mute BGM DIHAPUS dari sini
+      // Kembalikan state mute jika koneksi gagal & BGM sempat di-unmute
+      if (bgMusicRef.current && !isMuted) {
+          setIsMuted(true);
+          bgMusicRef.current.muted = true;
+      }
       return false;
     } finally {
       setIsConnecting(false);
@@ -340,7 +356,10 @@ function App() {
     setCheckedInToday(false);
     setCheckInStreak(0);
     setTotalCheckIns(0);
-    // Logika untuk mematikan musik BGM DIHAPUS dari sini
+    if (bgMusicRef.current && !isMuted) { // Matikan musik jika sedang play
+        bgMusicRef.current.pause(); // Atau set muted true
+        // setIsMuted(true); 
+    }
     toast.info("Wallet disconnected.");
   };
 
@@ -351,12 +370,10 @@ function App() {
       return;
     }
     if (!(await setupNetwork())) return;
-
-    if (!isMuted && clickAudioRef.current) { // Pastikan clickAudioRef.current ada
+    if (!isMuted) {
       clickAudioRef.current.currentTime = 0;
       clickAudioRef.current.play().catch(() => {});
     }
-
     const now = Date.now();
     const timeSinceLastTx = now - lastTxTime;
     if (timeSinceLastTx < 300) { //
@@ -415,7 +432,11 @@ function App() {
         const accounts = await window.ethereum.request({ method: "eth_accounts" });
         if (accounts.length > 0 && !isConnecting && !isConnected) {
           setIsConnecting(true); // Set isConnecting di awal
-          // Logika untuk bgMusicRef.current dan setIsMuted yang terkait BGM DIHAPUS dari sini
+          if (bgMusicRef.current && isMuted) { // Hanya mainkan jika muted
+            bgMusicRef.current.muted = false;
+            setIsMuted(false);
+            try { await bgMusicRef.current.play(); } catch {}
+          }
           await window.ethereum.request({ method: "eth_requestAccounts" });
           if (!(await setupNetwork(true))) throw new Error("Network setup failed");
           if (!(await loadBlockchainData())) throw new Error("Blockchain data load failed");
@@ -432,7 +453,11 @@ function App() {
         }
       } catch (error) {
         console.warn("Auto-connect failed:", error.message);
-        // Logika untuk mengembalikan state mute BGM DIHAPUS dari sini
+        // Tidak menampilkan toast error untuk auto-connect yang gagal agar tidak mengganggu
+        if (bgMusicRef.current && !isMuted) { // Jika BGM sempat di-unmute
+            setIsMuted(true);
+            bgMusicRef.current.muted = true;
+        }
       } finally {
         setIsConnecting(false); // Selalu set false di akhir
       }
@@ -541,15 +566,15 @@ function App() {
           }
         }
       } else {
-          console.log("Failed to load Gm summary data from checkin_stats.json:", compatResponse.status);
+         console.log("Failed to load Gm summary data from checkin_stats.json:", compatResponse.status);
       }
       // Update local storage pengguna jika total sistem lebih besar
       if (signer && summaryTotalCheckIns > 0) {
         const userAddress = await signer.getAddress();
         const localTotal = parseInt(localStorage.getItem(`totalCheckIns_${userAddress}`)) || 0;
         if (localTotal < summaryTotalCheckIns) { // Ini seharusnya tidak terjadi jika update dari server sudah benar
-          // localStorage.setItem(`totalCheckIns_${userAddress}`, summaryTotalCheckIns.toString());
-          // setTotalCheckIns(summaryTotalCheckIns); // Hindari overwrite data check-in individu dengan total sistem
+            // localStorage.setItem(`totalCheckIns_${userAddress}`, summaryTotalCheckIns.toString());
+            // setTotalCheckIns(summaryTotalCheckIns); // Hindari overwrite data check-in individu dengan total sistem
         }
       }
     } catch (error) {
@@ -652,7 +677,7 @@ function App() {
         if (!hasCheckedIn) { // Jika loadUserGmData mengembalikan false (belum checkin menurut server/local)
             const localCheckedIn = localStorage.getItem(`checkedInToday_${await signer.getAddress()}`) === "true";
             if (!localCheckedIn) { // Double check local storage, jika memang belum, tampilkan modal
-                // Cek apakah modal pernah ditampilkan hari ini
+                 // Cek apakah modal pernah ditampilkan hari ini
                 const lastPromptDate = localStorage.getItem(`lastCheckInPromptDate_${await signer.getAddress()}`);
                 const todayDateString = new Date().toDateString();
                 if (lastPromptDate !== todayDateString) {
@@ -660,10 +685,10 @@ function App() {
                     localStorage.setItem(`lastCheckInPromptDate_${await signer.getAddress()}`, todayDateString);
                 }
             } else {
-                setCheckedInToday(true); // Sinkronkan state jika local bilang sudah
+                 setCheckedInToday(true); // Sinkronkan state jika local bilang sudah
             }
         } else {
-            setCheckedInToday(true); // Sinkronkan state jika server bilang sudah
+             setCheckedInToday(true); // Sinkronkan state jika server bilang sudah
         }
     };
     // Beri jeda sebelum memeriksa, untuk memberi waktu loadUserGmData dari auto-connect
@@ -691,16 +716,16 @@ function App() {
       <div className="modal-overlay">
         <div className="modal-content checkin-modal">
           <div className="modal-header">
-            <h2>Daily Somnia</h2>
+            <h2>Daily gSomnia</h2>
             <button className="close-button" onClick={() => setShowCheckInModal(false)}>×</button>
           </div>
           <div className="modal-body">
             <div className="checkin-icon">☀️</div>
-            <p>Welcome back! Say Somnia today to continue your streak!</p>
+            <p>Welcome back! Say gSomnia today to continue your streak!</p>
             <p className="streak-count">Current streak: {checkInStreak} days</p>
           </div>
           <div className="modal-footer">
-            <button className="checkin-button" onClick={handleCheckInClick}>Click to Somnia</button>
+            <button className="checkin-button" onClick={handleCheckInClick}>Click to gSomnia</button>
           </div>
         </div>
       </div>
@@ -725,7 +750,7 @@ function App() {
           throw error; // Lempar error jika sudah max retries atau gagal permanen
         }
         if (error.message && error.message.includes("HTTP request failed")) {
-            console.log(`RPC request failed. Retrying in ${retryDelay * (retries +1) / 1000} seconds...`);
+           console.log(`RPC request failed. Retrying in ${retryDelay * (retries +1) / 1000} seconds...`);
         }
         await new Promise((resolve) => setTimeout(resolve, retryDelay * (retries + 1))); // Exponential backoff sederhana
       }
@@ -740,24 +765,22 @@ function App() {
     }
     if (!(await setupNetwork())) return;
     setShowCheckInModal(false); // Tutup modal segera
-
-    if (!isMuted && clickAudioRef.current) { // Pastikan clickAudioRef.current ada
+    if (!isMuted) {
       clickAudioRef.current.currentTime = 0;
       clickAudioRef.current.play().catch(() => {});
     }
-
     let txHashForPending;
     try {
       const tx = await contract.click(); // Check-in adalah sebuah klik
       txHashForPending = tx.hash;
       setPendingTransactions((prev) => new Set(prev).add(tx.hash));
-      toast.info("Somnia Clicks transaction sent. Waiting for confirmation...");
+      toast.info("gSomnia transaction sent. Waiting for confirmation...");
       const receipt = await waitForTransaction(tx);
       if (receipt.status === 1) {
         await loadBlockchainData(); // Muat ulang data klik
         await gmToday(); // Proses logika GM setelah transaksi berhasil
         toast.success(
-          <div>Somnia Clicks recorded! 🌞 Streak: {localStorage.getItem(`checkInStreak_${await signer.getAddress()}`)} days <br />
+          <div>gSomnia recorded! 🌞 Streak: {localStorage.getItem(`checkInStreak_${await signer.getAddress()}`)} days <br />
             <a href={`https://shannon-explorer.somnia.network/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer" style={{ color: "#FFA500" }}>
               View Transaction
             </a>
@@ -767,11 +790,11 @@ function App() {
           throw new Error("Transaction failed on-chain.");
       }
     } catch (txError) {
-      console.error("Somnia Clicks error:", txError);
+      console.error("Gm error:", txError);
       if (txError.message && txError.message.includes("HTTP request failed")) toast.error("Network connection error. Please try again later.");
       else if (txError.code === "ACTION_REJECTED") toast.error("Gm transaction rejected");
       else if (txError.code === "INSUFFICIENT_FUNDS") toast.error("Not enough STT for gas");
-      else toast.error("Somnia Clicks transaction failed. Please try again.");
+      else toast.error("Gm transaction failed. Please try again.");
     } finally {
         if(txHashForPending) {
             setPendingTransactions((prev) => {
@@ -786,25 +809,8 @@ function App() {
   return (
     <div className="app-container">
       <nav className="navbar">
-        <div className="navbar-title">Somnia Clicks</div>
+        <div className="navbar-title">gSomnia Clicks</div>
         <div className="navbar-links">
-                      <div className="sound-control-navbar">
-          {/* Anda bisa menambahkan tombol untuk mengontrol isMuted di sini jika mau */}
-          {/* Contoh:
-          <button onClick={() => setIsMuted(!isMuted)}>
-            {isMuted ? "Unmute Clicks" : "Mute Clicks"}
-          </button>
-          */}
-          <a
-            href="https://x.com/0xSambo24"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="X (Twitter)"
-            className="twitter-icon-navbar"
-          >
-            <FaXTwitter />
-          </a>
-        </div>
           {isConnected && signer && (
             <span className="wallet-address text-secondary">
               {signer.address.slice(0, 6)}...{signer.address.slice(-4)}
@@ -817,7 +823,14 @@ function App() {
           >
             {isConnecting ? 'Connecting...' : isConnected ? 'Disconnect' : 'Connect Wallet'}
           </button>
-
+          <div className="sound-control-navbar">
+            <button
+              className="glass-button"
+              onClick={() => setIsMuted(!isMuted)}
+            >
+              {isMuted ? "🔇" : "🔊"}
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -826,6 +839,7 @@ function App() {
           <div className="stats-header">
             <h2>
               <span>Statistics</span>
+              <img src="/clicklogo.png" alt="Stats Logo" width={24} height={24} />
             </h2>
           </div>
           <div className="stats-content">
@@ -867,11 +881,11 @@ function App() {
             )}
           </div>
           {isConnected && (
-              <button className="show-more-button" onClick={() => setShowFullStats(!showFullStats)}>
+             <button className="show-more-button" onClick={() => setShowFullStats(!showFullStats)}>
                 {showFullStats ? "Show Less" : "Show More Personal Stats"}
-              </button>
+             </button>
           )}
-            <div className="button-container-below-stats">
+           <div className="button-container-below-stats">
               <button className="network-button bottom-btn" onClick={() => window.open("https://testnet.somnia.network/", "_blank")}>
                 Explore Somnia Network
               </button>
@@ -892,13 +906,13 @@ function App() {
 
         <section className="centered-section leaderboard-panel-centered">
           <div className="leaderboard-header">
-            <h2>Leaderboard</h2>
+            <h2>🏆 Leaderboard</h2>
             {lastLeaderboardUpdate && (
               <div className="last-update text-secondary">
-                Snapshot is scheduled for 30-06-25 23:11:58 UTC. 
+                Snapshot is scheduled for 31-05-25 23:11:58 UTC. 
               </div>
             )}
-              { /* Tampilkan rank hanya jika terhubung DAN ada signer */ }
+             { /* Tampilkan rank hanya jika terhubung DAN ada signer */ }
             {isConnected && signer && (
               <div className="user-rank-display">
                 <div className="user-rank-position text-primary">
@@ -942,13 +956,13 @@ function App() {
               })}
             </div>
           </div>
-            {totalPages > 1 && (
+           {totalPages > 1 && (
             <div className="pagination">
                 <button className="pagination-btn" onClick={prevPage} disabled={currentPage <= 1}>◀</button>
                 <span className="text-secondary">Page {currentPage} of {totalPages}</span>
                 <button className="pagination-btn" onClick={nextPage} disabled={currentPage >= totalPages}>▶</button>
             </div>
-            )}
+           )}
         </section>
       </main>
 
@@ -965,7 +979,7 @@ function App() {
             <SiDiscord />
           </a>
           <a
-            href="https://x.com/somnia_network"
+            href="https://discord.com/invite/somnia"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="X (Twitter)"
@@ -982,6 +996,11 @@ function App() {
           </a>
         </div>
       </section>
+
+      <footer className="footer">
+        <p className="text-primary" style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>gSomnia Clicks</p> {/* Baris pertama, bisa ditambahkan style jika perlu */}
+        <p className="text-secondary" style={{ fontSize: '0.9rem' }}>Built with 💛 by Somnia Community</p> {/* Baris kedua */}
+      </footer>
 
       {renderCheckInModal()}
       <WalletSelectorModal />
