@@ -2,6 +2,15 @@
   "name": "gsomnia-click",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+  "type": "git",
+  "url": "git+https://github.com/lrmn7/gsomnia-click.git"
+  },
+  "author": "lrmn7",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/lrmn7/gsomnia-click/issues"
+  },
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

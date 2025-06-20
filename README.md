@@ -1,7 +1,7 @@
 # 🖱️ gSomnia Click dApp
 
 <p align="center">
-  <img src="./public/screenshoot.png" alt="gSomnia Click dApp Screenshot" />
+  <img src="./public/hero.png" alt="gSomnia Click dApp Screenshot" />
 </p>
 
 **gSomnia Click** is a fun and interactive Web3 game on the Somnia Network Testnet. Click the button, rack up on-chain clicks, and climb the leaderboard!
@@ -122,7 +122,7 @@ Please adhere to the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ## 📄 License
 
-MIT License © 2025 L RMN — see the [LICENSE](./LICENSE) file.
+© 2025 L RMN — see the [LICENSE](./LICENSE) file.
 
 ---
 
