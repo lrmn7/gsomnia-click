@@ -3,7 +3,7 @@ import { BrowserProvider, Contract } from "ethers";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css"; 
-import abi from "./ClickCounterABI.json"; //
+import abi from "./ABI.json"; //
 import bgMusicFile from "./assets/sounds/somnia-vibes-music.mp3"; //
 import clickSoundFile from "./assets/effects/click.mp3"; //
 import { Analytics } from "@vercel/analytics/react"; //
@@ -909,7 +909,7 @@ function App() {
             <h2>🏆 Leaderboard</h2>
             {lastLeaderboardUpdate && (
               <div className="last-update text-secondary">
-                Snapshot is scheduled for 31-05-25 23:11:58 UTC. 
+                Snapshot is scheduled for 02-08-25 23:11:58 UTC. 
               </div>
             )}
              { /* Tampilkan rank hanya jika terhubung DAN ada signer */ }

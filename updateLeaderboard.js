@@ -1,7 +1,7 @@
 // updateLeaderboard.js
 const fs = require("fs");
 const { ethers } = require("ethers");
-const abi = require("./src/ClickCounterABI.json");
+const abi = require("./src/ABI.json");
 const path = require("path");
 
 const CONFIG = {
