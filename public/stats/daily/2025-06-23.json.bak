@@ -1,4 +1,6 @@
 {
-  "count": 0,
-  "users": {}
+  "count": 1,
+  "users": {
+    "0x1871633cf3cd0c39fe4954bea5dc7a32b371e9dd": true
+  }
 }
