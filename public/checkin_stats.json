@@ -1,15 +1,16 @@
 {
   "stats": {
-    "totalCheckIns": 205,
+    "totalCheckIns": 206,
     "maxStreak": 1,
-    "checkInsToday": 1,
-    "lastUpdate": "2025-07-31T03:41:47.625Z"
+    "checkInsToday": 2,
+    "lastUpdate": "2025-07-31T04:42:12.552Z"
   },
   "dailyData": {
     "2025-07-31": {
-      "count": 1,
+      "count": 2,
       "users": [
-        "0x263e33bfd9e5c05c81c86ea16048187beee372ad"
+        "0x263e33bfd9e5c05c81c86ea16048187beee372ad",
+        "0xeb566632ee8fdc927160b066bd3375c9cf2023c7"
       ]
     }
   },
