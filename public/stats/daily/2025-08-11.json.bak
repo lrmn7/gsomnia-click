@@ -1,8 +1,10 @@
 {
-  "count": 3,
+  "count": 5,
   "users": {
     "0xeb566632ee8fdc927160b066bd3375c9cf2023c7": true,
     "0xd648d6f7f37b3dd20c5ac2bfe823f97b5418e676": true,
-    "0x46a9edae25d74e3c9816574e3850bda91df0b836": true
+    "0x46a9edae25d74e3c9816574e3850bda91df0b836": true,
+    "0x53eeb32cbc46ec5ca46caed0ab032973938cd3b2": true,
+    "0xc80702d941648b100557cedc5907ee84734bc686": true
   }
 }
