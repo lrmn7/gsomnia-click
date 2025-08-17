@@ -1,14 +1,16 @@
 {
   "stats": {
-    "totalCheckIns": 263,
+    "totalCheckIns": 264,
     "maxStreak": 1,
-    "checkInsToday": 0,
-    "lastUpdate": "2025-08-17T06:28:37.520Z"
+    "checkInsToday": 1,
+    "lastUpdate": "2025-08-17T07:18:05.975Z"
   },
   "dailyData": {
     "2025-08-17": {
-      "count": 0,
-      "users": []
+      "count": 1,
+      "users": [
+        "0xc80702d941648b100557cedc5907ee84734bc686"
+      ]
     }
   },
   "streaks": {}
